@@ -1,0 +1,58 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash Register</title></head><body>
+<style>
+html,body{margin: 0; padding: 0;
+    background: linear-gradient(-140deg, #222,#223, #222)}
+button{font-size: 1rem;color: #222;border:0;background: orange;margin: 1rem;width: 30%;}
+button:hover{transform: scale(1.05)}
+#status{padding: 1rem}
+#change{padding: 1rem}
+input{border: 0.1rem solid #7779;background: #222; color: #eee;text-align: center}
+#result{ color: #222;font-size: 7rem;}
+.aligner{display: flex; align-items: center;justify-content:center;min-height: 100vh;text-align: center;}
+.centerbox{background: #fff0; max-width: 40%;min-height: 60vh;flex:1 ;
+}
+hr{
+    width: 30rem;
+    height: 0.4rem;
+    background: linear-gradient(90deg, #eee0,  #eee4, #eee0);
+    border: 0;
+}
+</style>
+
+
+<div class="aligner">
+    <div class="centerbox">
+        <br>
+        <h2>CA$HREGIST€R</h2>
+        <hr>
+        <br><br>
+        
+        <input type="text" id="inputCash" placeholder="CASH">
+        <input type="text" id="inputPrice" placeholder="PRICE"><br><br>
+        In register: <span id="status">0000</span>
+        <br><br>
+        Change: <span id="change">0000</span>
+            <br>
+        <button type="submit"  onclick="buttonclick()"> GO </button>
+        <br><br>
+        <div id="result" >	</div>
+    </div>         
+</div>
+
+<script>
+let status = [1,2];
+document.getElementById("status").innerHTML =status;
+
+function buttonclick(){
+
+var cash = document.getElementById("inputCash").value;
+var price = document.getElementById("inputPrice").value;
+document.getElementById("status").innerHTML =status;
+
+};
+
+</script>
+</body>
+</html>
