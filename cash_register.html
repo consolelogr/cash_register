@@ -3,10 +3,11 @@
 <title>Cash Register</title></head><body>
 <style>
 html,body{margin: 0; padding: 0;
-    background: linear-gradient(-140deg, #222,#223, #222)}
+    background: linear-gradient(-140deg, #222,#223, #222)
+    background: #eee}
 button{font-size: 1rem;color: #222;border:0;background: orange;margin: 1rem;width: 30%;}
 button:hover{transform: scale(1.05)}
-#status{padding: 1rem}
+#inregister{padding: 1rem}
 #change{padding: 1rem}
 input{border: 0.1rem solid #7779;background: #222; color: #eee;text-align: center}
 #result{ color: #222;font-size: 7rem;}
@@ -29,11 +30,13 @@ hr{
         <hr>
         <br><br>
         
-        <input type="text" id="inputCash" placeholder="CASH">
-        <input type="text" id="inputPrice" placeholder="PRICE"><br><br>
-        In register: <span id="status">0000</span>
-        <br><br>
-        Change: <span id="change">0000</span>
+        <input type="number" id="inputCash" placeholder="CASH">
+        <input type="number" id="inputPrice" placeholder="PRICE"><br><br>
+        In register: <span id="inregister">700</span>
+        <br>
+        Status: <span id="status">CLOSED</span>
+        <br>
+        Change: <span id="change">-</span>
             <br>
         <button type="submit"  onclick="buttonclick()"> GO </button>
         <br><br>
@@ -42,14 +45,40 @@ hr{
 </div>
 
 <script>
-let status = [1,2];
-document.getElementById("status").innerHTML =status;
+let inregister = 700;
 
 function buttonclick(){
 
-var cash = document.getElementById("inputCash").value;
-var price = document.getElementById("inputPrice").value;
-document.getElementById("status").innerHTML =status;
+var some = checkCashRegister(document.getElementById("inputCash").value, 
+           document.getElementById("inputPrice").value);
+var statusState;
+
+
+function checkCashRegister(cash,price){
+var cashIn = parseInt(cash); 
+var priceIn = parseInt(price);
+
+
+if(cash===price){ inregister = inregister+priceIn ;
+return { status:"CLOSED", change: 0 };
+}
+
+if(cash<price){return { status:"INSUFFICIENT_FUNDS", change: 0 }}; 
+
+if(cash>price){
+var changeState = [["penny", cashIn-priceIn]];
+
+    inregister = inregister+priceIn ;
+    return { status:"OPEN", change: changeState };
+}
+
+}
+
+document.getElementById("inregister").innerHTML = inregister;
+document.getElementById("status").innerHTML = some.status;
+document.getElementById("change").innerHTML = some.change[0][0] + ": "+ some.change[0][1];
+
+
 
 };
 
