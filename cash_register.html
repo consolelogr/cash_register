@@ -15,7 +15,7 @@ input{border: 0.1rem solid #7779;background: #222; color: #eee;text-align: cente
 .centerbox{background: #fff0; max-width: 40%;min-height: 60vh;flex:1 ;
 }
 hr{
-    width: 30rem;
+    width: 10rem;
     height: 0.4rem;
     background: linear-gradient(90deg, #eee0,  #eee4, #eee0);
     border: 0;
@@ -32,7 +32,7 @@ hr{
         
         <input type="number" id="inputCash" placeholder="CASH">
         <input type="number" id="inputPrice" placeholder="PRICE"><br><br>
-        In register: <span id="inregister">700</span>
+        In register: <span id="inregister">700.00</span>
         <br>
         Status: <span id="status">CLOSED</span>
         <br>
@@ -45,7 +45,7 @@ hr{
 </div>
 
 <script>
-let inregister = 700;
+var inregister = 700.00;
 
 function buttonclick(){
 
@@ -54,16 +54,21 @@ var some = checkCashRegister(document.getElementById("inputCash").value,
 var statusState;
 
 
-function checkCashRegister(cash,price){
-var cashIn = parseFloat(cash).toFixed(2); var priceIn = parseFloat(price).toFixed(2);
-var changeOut = cashIn - priceIn; var changeState = [["uu", changeOut]];
+function checkCashRegister(price,cash,cid){
+    
+var priceIn = parseFloat(price).toFixed(2);
+var cashIn = parseFloat(cash).toFixed(2);
+var changeOut = cashIn - priceIn; 
+var changeState = [["uu", changeOut]];
 
-if(cash===price){ inregister = inregister+priceIn ;
-return { status:"CLOSED", change: 0 }; }
 if(cash<price){return { status:"INSUFFICIENT_FUNDS", change: [[0]] }}; 
 
+if(cash===price){ inregister = inregister + parseFloat(priceIn)  ;
+return { status:"CLOSED", change: 0 }; }
+
 if(cash>price){
-inregister = inregister+priceIn ;
+
+inregister = inregister + parseFloat(price);
 
 var  HUNDREDS = Math.floor(changeOut/100);
 var  TWENTY =  Math.floor((changeOut - HUNDREDS*100)/20 );
@@ -76,30 +81,20 @@ var  DIME = Math.floor( (changeOut % 1 - QUARTER*0.25)/0.10 ).toFixed(0);
 var  NICKEL = Math.floor( (changeOut % 1 - QUARTER*0.25 -DIME*0.1)/0.05 ).toFixed(0);
 var  PENNY = Math.floor( (changeOut % 1 - QUARTER*0.25 -DIME*0.1-NICKEL*0.05)/0.01 ).toFixed(0); 
 
-/*
-[
-  ["PENNY", 1.01],
-  ["NICKEL", 2.05],
-  ["DIME", 3.1],
-  ["QUARTER", 4.25],
-  ["ONE", 90],
-  ["FIVE", 55],
-  ["TEN", 20],
-  ["TWENTY", 60],
-  ["ONE HUNDRED", 100]
-]
-*/
+
+
 console.log(HUNDREDS,TWENTY, TEN, FIVE, ONE,QUARTER, DIME, NICKEL,PENNY);
 
     return { status:"OPEN", change: changeOut };
 //    return { status:"OPEN", change: [["PENNY", 1.01] ]  }
 
 }
-} //func end
-
-document.getElementById("inregister").innerHTML = inregister;
+} //func 
+var finregister =(inregister).toFixed(2);
+console.log(inregister.toFixed(2));
+document.getElementById("inregister").innerHTML = (inregister.toFixed(2));
 document.getElementById("status").innerHTML = some.status;
-document.getElementById("change").innerHTML = some.change;
+document.getElementById("change").innerHTML = ((some.change).toFixed(2));
 //some.change[0][0] + ": "+ some.change[0][1];
 
 
