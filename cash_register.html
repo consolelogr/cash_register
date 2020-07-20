@@ -55,28 +55,52 @@ var statusState;
 
 
 function checkCashRegister(cash,price){
-var cashIn = parseInt(cash); 
-var priceIn = parseInt(price);
-
+var cashIn = parseFloat(cash).toFixed(2); var priceIn = parseFloat(price).toFixed(2);
+var changeOut = cashIn - priceIn; var changeState = [["uu", changeOut]];
 
 if(cash===price){ inregister = inregister+priceIn ;
-return { status:"CLOSED", change: 0 };
-}
-
-if(cash<price){return { status:"INSUFFICIENT_FUNDS", change: 0 }}; 
+return { status:"CLOSED", change: 0 }; }
+if(cash<price){return { status:"INSUFFICIENT_FUNDS", change: [[0]] }}; 
 
 if(cash>price){
-var changeState = [["penny", cashIn-priceIn]];
+inregister = inregister+priceIn ;
 
-    inregister = inregister+priceIn ;
-    return { status:"OPEN", change: changeState };
-}
+var  HUNDREDS = Math.floor(changeOut/100);
+var  TWENTY =  Math.floor((changeOut - HUNDREDS*100)/20 );
+var  TEN = Math.floor((changeOut - HUNDREDS*100 - TWENTY*20)/10 );
+var  FIVE = Math.floor((changeOut - HUNDREDS*100 - TWENTY*20 - TEN*10)/5 );
+var  ONE = Math.floor((changeOut - HUNDREDS*100 - TWENTY*20 - TEN*10 -FIVE*5)/1); 
+
+var  QUARTER = Math.floor( (changeOut % 1)/0.25 ).toFixed(0);
+var  DIME = Math.floor( (changeOut % 1 - QUARTER*0.25)/0.10 ).toFixed(0);
+var  NICKEL = Math.floor( (changeOut % 1 - QUARTER*0.25 -DIME*0.1)/0.05 ).toFixed(0);
+var  PENNY = Math.floor( (changeOut % 1 - QUARTER*0.25 -DIME*0.1-NICKEL*0.05)/0.01 ).toFixed(0); 
+
+/*
+[
+  ["PENNY", 1.01],
+  ["NICKEL", 2.05],
+  ["DIME", 3.1],
+  ["QUARTER", 4.25],
+  ["ONE", 90],
+  ["FIVE", 55],
+  ["TEN", 20],
+  ["TWENTY", 60],
+  ["ONE HUNDRED", 100]
+]
+*/
+console.log(HUNDREDS,TWENTY, TEN, FIVE, ONE,QUARTER, DIME, NICKEL,PENNY);
+
+    return { status:"OPEN", change: changeOut };
+//    return { status:"OPEN", change: [["PENNY", 1.01] ]  }
 
 }
+} //func end
 
 document.getElementById("inregister").innerHTML = inregister;
 document.getElementById("status").innerHTML = some.status;
-document.getElementById("change").innerHTML = some.change[0][0] + ": "+ some.change[0][1];
+document.getElementById("change").innerHTML = some.change;
+//some.change[0][0] + ": "+ some.change[0][1];
 
 
 
