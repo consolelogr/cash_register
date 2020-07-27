@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASH</title>
-    <style>body{background: #222;color:#eee; text-align: center}</style>    
-</head><body> <div id="blast"><br></div>
-</body>
-</html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CASH</title>
+<style>body{background: #222;color:#eee; text-align: center}</style>    
+</head> <body> <div id="blast"><br></div>
 
 <script>
-
 function checkCashRegister(price, cash, cid) {
-//var changeOut = [];
-var changeCash =[];  // cash-price to an array in units
-var changeAmount=cash-price;
 var diff = cash-price;
 var registerCash = [];  // get it from cid in units
 var registerTotal =0;
@@ -32,101 +26,50 @@ registerCash.push(Math.round (cid[2][1]/0.10 ) );
 registerCash.push(Math.round(cid[1][1]/0.05 ) );
 registerCash.push(Math.round (cid[0][1]/0.01 ) );
 
-changeCash.push(Math.floor( changeAmount/100) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100) /20) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100 - changeCash[1]*20) /10) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100 - changeCash[1]*20 - changeCash[2]*10)/5) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100 - changeCash[1]*20 - changeCash[2]*10  - changeCash[3]*5 )/1) );
+for (i=0; i<9;i++)
+{registerTotal += cid[i][1];}  //luo register totaali
 
-changeCash.push(Math.floor(changeAmount % 1                                                                     /0.25 ));
-changeCash.push(Math.floor(( (changeAmount % 1) - changeCash[5]*0.25 )                                         /0.10  ));
-changeCash.push(Math.floor(( (changeAmount % 1) - changeCash[5]*0.25 - changeCash[6]*0.1 )                     /0.05  ));
-changeCash.push(Math.round(( (changeAmount % 1) - changeCash[5]*0.25 - changeCash[6]*0.1 - changeCash[7]*0.05) /0.01  ));
+ //if(cash===price) { return {status: "CLOSED", change: cid}  };
+if(registerTotal == diff){return {status: "CLOSED", change: cid}  };
 
-
-for (i=0; i<9;i++){registerTotal += cid[i][1];}  //luo register totaali
-
-console.log("registerTotal+Cash,,diff : ", registerTotal,registerCash, diff);
-if(cash===price)              { return {status: "CLOSED", change: cid}   }
-
-
-
-
-for (var i=0;i<9;i++){
-   
-    if( diff/values[i] >= 1){   /* esim.  96/100 >= 1                                 */
-         console.log("====> diff/values[i] > 1",values[i], diff);
-
-         for(var j=0; registerCash[i] > 0  && diff >= values[i] ; j++ ){
-             diff -= values[i];
-             diff = Math.round(diff * 100) / 100;
-             registerCash[i] -= 1;
-             changeCash[i] -= 1;
-          
-             console.log("poistaa", values[i], registerCash[i], diff);
-         }
-         
-         out.push([cid[8-i][0],j*values[i]]);
-         console.log([cid[8-i][0],j]);
-        
-//changeCash ei toimi!!!!  lisää ehtoja luuppiiiiiiN
-
-//loop that check if there is enough bills or coins
-//push when done and remove from diff and continue BIG loop
-
-        
-
+if (cash>=price){
+  for (var i=0;i<9;i++){
+      if( diff/values[i] >= 1){   /* esim.  96/100 >= 1                                 */
+        console.log("cl.. diff/values[i] > 1",values[i], diff);
+            for(var j=0; registerCash[i] > 0  && diff >= values[i] ; j++ ){
+                diff -= values[i];
+                diff = Math.round(diff * 100) / 100;
+                registerCash[i] -= 1;
+                //changeCash[i] -= 1;
+                console.log("cl.. poistaa", values[i], registerCash[i], diff);
+    }
+    out.push(   [cid[8-i][0],j*values[i]]);
     }
 
+  }//end for
+} //end if
 
+if(diff!==0) { 
+  
+    console.log("cl.. INSUFFI");
+    return {status: "INSUFFICIENT_FUNDS", change: [] }   ;
+}
 
-
-}//end for
+if(diff==0) { 
+    console.log("cl.. status: ..OPEN.. ", out);
+    return { status: "OPEN", change: out };  
 //change: [["TWENTY", 60], ["TEN", 20], ["FIVE", 15], ["ONE", 1], ["QUARTER", 0.5], ["DIME", 0.2], ["PENNY", 0.04]]}.
-var drbooboo = {status: "OPEN",change: out }
-console.log(drbooboo);
-return {status: "OPEN", change: out };
-
 }
 
 
-console.log(checkCashRegister(3.26, 100, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 4.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]));
+} //end of funkkis
+checkCashRegister(19.5, 20, [["PENNY", 0.01], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])
+//checkCashRegister(19.5, 20, [["PENNY", 0.5], ["NICKEL", 0], ["DIME", 0], ["QUARTER", 0], ["ONE", 0], ["FIVE", 0], ["TEN", 0], ["TWENTY", 0], ["ONE HUNDRED", 0]])
+//checkCashRegister(29.5, 20, [["PENNY", 1.01], ["NICKEL", 2.05], ["DIME", 3.1], ["QUARTER", 0.25], ["ONE", 90], ["FIVE", 55], ["TEN", 20], ["TWENTY", 60], ["ONE HUNDRED", 100]]);
 
-/*
-changeCash.push(Math.floor( changeAmount/100) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100) /20) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100 - changeCash[1]*20) /10) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100 - changeCash[1]*20 - changeCash[2]*10)/5) );
-changeCash.push(Math.floor( (changeAmount - changeCash[0]*100 - changeCash[1]*20 - changeCash[2]*10  - changeCash[3]*5 )/1) );
 
-changeCash.push(Math.floor(changeAmount % 1                                                                     /0.25 ));
-changeCash.push(Math.floor(( (changeAmount % 1) - changeCash[5]*0.25 )                                         /0.10  ));
-changeCash.push(Math.floor(( (changeAmount % 1) - changeCash[5]*0.25 - changeCash[6]*0.1 )                     /0.05  ));
-changeCash.push(Math.round(( (changeAmount % 1) - changeCash[5]*0.25 - changeCash[6]*0.1 - changeCash[7]*0.05) /0.01  ));
-*/
-
-   /* if(changeCash[i]!=0 && changeCash[i]>registerCash[i]){ 
-        console.log(i, registerCash[i-1]*values[i+1]);
-        
-        
-        else{return   {status: "INSUFFICIENT_FUNDS", change: []}}
-          
-    }*/
-
-/*    
-
-    if  (changeCash[i]!=0 && changeCash[i] <= registerCash[i]) {
-
-out[0].push( [cid[8-i][0],changeCash[i]*values[i]]);
-}
-
-else if( changeCash[i]*values[i]   <=  registerCash[i+1]*values[i+1])
-{ 
-//console.log("here",registerCash[i+1]*values[i+1]);
-out[0].push( [cid[7-i][0],    registerCash[i+1]*values[i+1] ] );
-changeCash[i+1] += 100000000000000000000000;
-//lokiiika ku vähennetään osa edellisestä  //takaisin paperin ääreen lissää tolkkua tarwii... ja shalomii
-} 
-*/
 
 </script>
+
+</body>
+</html>

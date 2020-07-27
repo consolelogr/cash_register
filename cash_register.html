@@ -47,59 +47,61 @@ hr{
 <script>
 var inregister = 700.00;
 
-function buttonclick(){
+function checkCashRegister(price, cash, cid) {
+var diff = cash-price;
+var registerCash = [];  // get it from cid in units
+var registerTotal =0;
+var values =[100, 20, 10, 5, 1, 0.25, 0.1, 0.05, 0.01];
+var out =[]; //lopullinen ulostunku
 
-var some = checkCashRegister(document.getElementById("inputCash").value, 
-           document.getElementById("inputPrice").value);
-var statusState;
+//How many of each unita are in register
+registerCash.push(Math.round (cid[8][1]/100) ) ;
+registerCash.push(Math.round (cid[7][1]/20 ) );
+registerCash.push(Math.round (cid[6][1]/10 ) );
+registerCash.push(Math.round (cid[5][1]/5 ) );
+registerCash.push(Math.round (cid[4][1]/1 ) );
+registerCash.push(Math.round (cid[3][1]/0.25 ) );
+registerCash.push(Math.round (cid[2][1]/0.10 ) );
+registerCash.push(Math.round(cid[1][1]/0.05 ) );
+registerCash.push(Math.round (cid[0][1]/0.01 ) );
 
+for (i=0; i<9;i++)
+{registerTotal += cid[i][1];}  //luo register totaali
 
-function checkCashRegister(price,cash,cid){
-    
-var priceIn = parseFloat(price).toFixed(2);
-var cashIn = parseFloat(cash).toFixed(2);
-var changeOut = cashIn - priceIn; 
-var changeState = [["uu", changeOut]];
+ //if(cash===price) { return {status: "CLOSED", change: cid}  };
+if(registerTotal == diff){return {status: "CLOSED", change: cid}  };
 
-if(cash<price){return { status:"INSUFFICIENT_FUNDS", change: [[0]] }}; 
+if (cash>=price){
+  for (var i=0;i<9;i++){
+      if( diff/values[i] >= 1){   /* esim.  96/100 >= 1                                 */
+        console.log("cl.. diff/values[i] > 1",values[i], diff);
+            for(var j=0; registerCash[i] > 0  && diff >= values[i] ; j++ ){
+                diff -= values[i];
+                diff = Math.round(diff * 100) / 100;
+                registerCash[i] -= 1;
+                //changeCash[i] -= 1;
+                console.log("cl.. poistaa", values[i], registerCash[i], diff);
+    }
+    out.push(   [cid[8-i][0],j*values[i]]);
+    }
 
-if(cash===price){ inregister = inregister + parseFloat(priceIn)  ;
-return { status:"CLOSED", change: 0 }; }
+  }//end for
+} //end if
 
-if(cash>price){
-
-inregister = inregister + parseFloat(price);
-
-var  HUNDREDS = Math.floor(changeOut/100);
-var  TWENTY =  Math.floor((changeOut - HUNDREDS*100)/20 );
-var  TEN = Math.floor((changeOut - HUNDREDS*100 - TWENTY*20)/10 );
-var  FIVE = Math.floor((changeOut - HUNDREDS*100 - TWENTY*20 - TEN*10)/5 );
-var  ONE = Math.floor((changeOut - HUNDREDS*100 - TWENTY*20 - TEN*10 -FIVE*5)/1); 
-
-var  QUARTER = Math.floor( (changeOut % 1)/0.25 ).toFixed(0);
-var  DIME = Math.floor( (changeOut % 1 - QUARTER*0.25)/0.10 ).toFixed(0);
-var  NICKEL = Math.floor( (changeOut % 1 - QUARTER*0.25 -DIME*0.1)/0.05 ).toFixed(0);
-var  PENNY = Math.floor( (changeOut % 1 - QUARTER*0.25 -DIME*0.1-NICKEL*0.05)/0.01 ).toFixed(0); 
-
-
-
-console.log(HUNDREDS,TWENTY, TEN, FIVE, ONE,QUARTER, DIME, NICKEL,PENNY);
-
-    return { status:"OPEN", change: changeOut };
-//    return { status:"OPEN", change: [["PENNY", 1.01] ]  }
-
+if(diff!==0) { 
+  
+    console.log("cl.. INSUFFI");
+    return {status: "INSUFFICIENT_FUNDS", change: [] }   ;
 }
-} //func 
-var finregister =(inregister).toFixed(2);
-console.log(inregister.toFixed(2));
-document.getElementById("inregister").innerHTML = (inregister.toFixed(2));
-document.getElementById("status").innerHTML = some.status;
-document.getElementById("change").innerHTML = ((some.change).toFixed(2));
-//some.change[0][0] + ": "+ some.change[0][1];
+
+if(diff==0) { 
+    console.log("cl.. status: ..OPEN.. ", out);
+    return { status: "OPEN", change: out };  
+//change: [["TWENTY", 60], ["TEN", 20], ["FIVE", 15], ["ONE", 1], ["QUARTER", 0.5], ["DIME", 0.2], ["PENNY", 0.04]]}.
+}
 
 
-
-};
+} //end of funkkis
 
 </script>
 </body>
